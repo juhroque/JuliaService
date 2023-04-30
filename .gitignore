@@ -25,6 +25,7 @@ heroku.json
 # Maven (from: https://github.com/github/gitignore/blob/master/Maven.gitignore)
 
 target/
+pom.xml
 pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup
