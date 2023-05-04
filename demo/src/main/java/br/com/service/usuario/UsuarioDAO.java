@@ -87,4 +87,114 @@ public class UsuarioDAO {
 
         return usuarios;
     }
+
+    public Usuario encontrarUsuario(String username){
+        String sql = "SELECT * FROM usuarios WHERE username = ?";
+
+        ResultSet resultSet;
+        Usuario usuario = null;
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, username);
+
+            resultSet = preparedStatement.executeQuery();
+
+            while(resultSet.next()){
+                String primeiroNome = resultSet.getString(1);
+                String usernameEncontrado = resultSet.getString(2);
+                String email = resultSet.getString(3);
+                String senha = resultSet.getString(4);
+                String plano = resultSet.getString(5);
+
+                DadosCadastroUsuario dadosCadastroUsuario = new DadosCadastroUsuario(primeiroNome, usernameEncontrado, email, senha, plano);
+
+                usuario = new Usuario(dadosCadastroUsuario);
+            }
+
+            preparedStatement.close();
+            connection.close();
+        } catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+
+        return usuario;
+    }
+
+    public boolean autenticacao(String username, String senha){
+        String sql = "SELECT * FROM usuarios WHERE username = ? AND senha = ?";
+
+        ResultSet resultSet;
+        Usuario usuario = null;
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, username);
+            preparedStatement.setString(2, senha);
+
+            resultSet = preparedStatement.executeQuery();
+
+            while(resultSet.next()){
+                String primeiroNome = resultSet.getString(1);
+                String usernameEncontrado = resultSet.getString(2);
+                String email = resultSet.getString(3);
+                String senhaEncontrada = resultSet.getString(4);
+                String plano = resultSet.getString(5);
+
+                DadosCadastroUsuario dadosCadastroUsuario = new DadosCadastroUsuario(primeiroNome, usernameEncontrado, email, senhaEncontrada, plano);
+
+                usuario = new Usuario(dadosCadastroUsuario);
+            }
+
+            preparedStatement.close();
+            connection.close();
+        } catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+
+        if(usuario == null){
+            System.out.println("Usuário ou senha incorreto(s).");
+            return false;
+        } else {
+            System.out.println("Autenticado! Seja bem-vindo, " + usuario.getPrimeiroNome() + "!");
+            System.out.println("Seu plano é: " + usuario.getPlano() + ".");
+            return true;
+        }
+    }
+
+    public void alterarSenha(String username, String novaSenha){
+        String sql = "UPDATE usuarios SET senha = ? WHERE username = ?";
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, novaSenha);
+            preparedStatement.setString(2, username);
+
+            preparedStatement.execute();
+            preparedStatement.close();
+            connection.close();
+        } catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+
+        System.out.println("Senha alterada com sucesso!");
+    }
+
+    public void alterarPlano(String username, String novoPlano){
+        String sql = "UPDATE usuarios SET plano = ? WHERE username = ?";
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, novoPlano);
+            preparedStatement.setString(2, username);
+
+            preparedStatement.execute();
+            preparedStatement.close();
+            connection.close();
+        } catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+
+        System.out.println("Plano alterado com sucesso!");
+    }
 }

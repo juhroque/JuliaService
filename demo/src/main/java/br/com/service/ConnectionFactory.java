@@ -1,4 +1,4 @@
-package br.com;
+package br.com.service;
 
 import java.io.FileInputStream;
 import java.io.IOException;
